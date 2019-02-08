@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Main</title>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" th:href= "@{/css/dropzone.css}" />
+    <script th:src="@{/js/dropzone.js}"></script>
+
+
+
+    <script>
+        //파일 하나만 올릴수 있게 함 ㅎ
+        Dropzone.options.fileUploadForm1={
+            maxFiles: 1,
+            dictDefaultMessage: "업로드할 파일1을 드랍하세요",
+            addRemoveLinks: true,
+            dictCancelUpload:"취소",
+            dictUploadCanceled: "취소완료",
+            dictResponseError:"업로드 실패",
+            init: function() {
+                this.on("success", function(file, serverResponse) {
+                    // Called after the file successfully uploaded.
+                    alert(JSON.stringify(serverResponse)); //서버 응답 받아올 수 있네....
+
+                    // If the image is already a thumbnail:
+                    // this.emit('thumbnail', file, serverResponse.imageUrl);
+
+                    // If it needs resizing:
+                    // this.createThumbnailFromUrl(file, serverResponse.imageUrl); //뭔 의미냐
+                });
+            }
+        };
+
+
+
+        Dropzone.options.fileUploadForm2={
+            maxFiles: 1,
+            dictDefaultMessage: "업로드할 파일2를 드랍하세요",
+            addRemoveLinks: true,
+            dictCancelUpload:"취소", //이거 왜 리플레이스 안되는것..?
+            dictUploadCanceled: "취소완료",
+            dictResponseError:"업로드 실패",
+            init: function() {
+                this.on("success", function(file, serverResponse) {
+                    // Called after the file successfully uploaded.
+                    alert(JSON.stringify(serverResponse)); //서버 응답 받아올 수 있네.... 에러일 경우(=400~500번대 에러반환시)에는 상기 dictResponseError의 문구를 사용하고, success일 경우에는 여기로
+
+                    // If the image is already a thumbnail:
+                    // this.emit('thumbnail', file, serverResponse.imageUrl); //ㄴ
+
+                    // If it needs resizing:
+                    // this.createThumbnailFromUrl(file, serverResponse.imageUrl);
+                });
+            }
+        };
+
+
+
+        // How to show an error returned by the server?
+        //     Very often you have to do some verification on the server to check if the file is actually valid.
+        // ** If you want Dropzone to display any error encountered on the server, all you have to do, is send back a proper HTTP status code in the range of 400 - 500.
+        //     In most frameworks those error codes are generated automatically when you send back an error to the client.
+        //     In PHP (for example) you can set it with the header command.
+        //     Dropzone will then know that the file upload was invalid, and will display the returned text as error message.
+        //     If the Content-Type of your response is text/plain, you can just return the text without any further markup.
+        // If the Content-Type is application/json, Dropzone will use the error property of the provided object. Eg.: { "error": "File could not be saved." }
+        // ... json객체에 error를 키로 해서 보내도 멀쩡히 잘만 뜨는ㄷ...? 아...내가컨텐트 타입을 안정했나
+
+
+        window.onload=function(){
+
+
+        $("#del").click(function(event){
+            event.preventDefault();
+            delTest();
+        });
+
+
+        };
+
+
+        function delTest(){
+            $.ajax({
+                type: 'delete',
+                url: 'http://localhost:8080/del',
+                contentType: 'application/json; charset=utf-8',
+                complete: function (data) {
+                    alert("통신 완료 "+JSON.stringify(data));
+                }
+            });
+        }
+
+    </script>
+    <style>
+        #first {
+            width: 300px;
+            display: inline-block;
+        }
+
+        #second{
+            width: 300px;
+            display: inline-block;
+        }
+    </style>
+
+</head>
+<body>
+
+
+<div id ="first">
+    테스트
+    <form enctype="multipart/form-data" action="/upload1" method="POST" class="dropzone" id="fileUploadForm1">
+
+    </form>
+</div>
+
+<div id="second">
+    테스트 2
+    <form enctype="multipart/form-data" action="/upload2" method="POST" class="dropzone" id="fileUploadForm2">
+        <span id="fileUploadStatus2"></span>
+    </form>
+</div>
+<br />
+
+
+
+
+
+<button id="del">삭제 테스트 </button>
+
+
+</body>
+</html>

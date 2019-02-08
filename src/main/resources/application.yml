@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost/seconddb?characterEncoding=utf8&serverTimezone=UTC
+    username: root
+    password: mysqlroot
+  jpa:
+#    hibernate.ddl-auto: update
+#    generate-ddl: true
+    show-sql: true
